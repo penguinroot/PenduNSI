@@ -73,4 +73,4 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 
 ## Remerciements
 
-Merci aux enseignants de NSI pour leur soutien et leurs conseils tout au long du développement de ce projet.
+Merci à toutes les perssones ayant participés de près ou de loin.
