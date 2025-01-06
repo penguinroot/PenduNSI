@@ -87,7 +87,10 @@ def ouvrir_jeu(borne_mini, borne_maxi, wlangue):
     fenetre_jeu.resizable(height=True, width=True)
     fenetre_jeu.configure(bg="white")
 
-    bg_image_path = "0.jpg"
+    bg_image_url = "http://109.10.114.61/PenduNSI/0.jpg"
+    response = requests.get(bg_image_url)
+    response.raise_for_status()
+    bg_image = Image.open(io.BytesIO(response.content))
     bg_image = Image.open(bg_image_path)
     bg_image = bg_image.resize((int(500 * wratio), int(500 * wratio)))
     bg_image_tk = ImageTk.PhotoImage(bg_image)
