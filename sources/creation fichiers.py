@@ -1,0 +1,157 @@
+import csv,os
+
+# Dictionnaires contenant les mots par langue
+words = {
+    "fr": [
+        "abeille", "abricot", "acteur", "adresse", "agneau", "aigle", "aiguille", "albâtre", "alligator", "ambulance",
+        "amitié", "ananas", "ancêtre", "ange", "anniversaire", "antilope", "araignée", "arc-en-ciel", "arche", "ardoise",
+        "argent", "armure", "armoire", "artichaut", "ascenseur", "aspirateur", "astéroïde", "astronaute", "avocat", "baleine",
+        "ballon", "bambou", "banane", "banquise", "barbe", "barque", "basket", "baignoire", "bâtiment", "bataille",
+        "bijou", "biscuit", "blague", "blé", "blouse", "boa", "bonheur", "boussole", "bouquet", "brique",
+        "brouillard", "budget", "buffet", "bulle", "bureau", "buste", "cactus", "cadeau", "caillou", "caméra",
+        "camion", "canard", "canne", "cannelle", "capitaine", "caravane", "carotte", "cascade", "castor", "cathédrale",
+        "ceinture", "cerise", "cerf", "cerveau", "chameau", "chandelle", "chantier", "chapeau", "charbon", "chaton",
+        "chauve-souris", "chemise", "chêne", "chèvre", "cheval", "chevalier", "cheville", "cheminée", "chicane", "chocolat",
+        "cigogne", "cimetière", "citron", "clairière", "cloche", "clown", "coiffeur", "colibri", "collier", "combat",
+        "comète", "compagnie", "compteur", "confiture", "coquillage", "corail", "corbeau", "corde", "cornichon", "cosmos",
+        "coton", "couette", "couronne", "crabe", "crocodile", "cuillère", "cyclope", "cygne", "désert", "diamant",
+        "dictée", "dinosaure", "disque", "dragon", "drapeau", "échelle", "éclair", "école", "écureuil", "éléphant",
+        "élixir", "étoile", "étui", "fantôme", "farine", "ferme", "flamme", "flocon", "forêt", "fourchette",
+        "framboise", "fusée", "galette", "gargouille", "gaufre", "gazelle", "géant", "girafe", "glaçon", "grenouille",
+        "grotte", "guépard", "guitare", "habit", "haricot", "hibou", "hippopotame", "horloge", "hôtel", "igloo",
+        "illusion", "image", "immeuble", "insecte", "invitation", "ivoire", "jardin", "jongleur", "jungle", 
+        "kangourou", "koala", "labyrinthe", "lac", "lampe", "lance", "lézard", "librairie", "limonade", "lion",
+        "livre", "locomotive", "loup", "luciole", "magie", "mammouth", "mandarine", "mangue", "manteau", "marionnette",
+        "marteau", "masque", "méduse", "mer", "météore", "miroir", "montgolfière", "moustique", "mouton", "muraille",
+        "mystère", "nageoire", "narval", "navette", "neige", "nuage", "oasis", "océan", "oiseau", "olive",
+        "ombrelle", "ongle", "orage", "orchestre", "oreiller", "ornithorynque", "ours", "papillon", "parachute", "parapluie",
+        "pastèque", "pâtisserie", "pélican", "pendule", "pêche", "pêcheur", "péninsule", "perroquet", "phare", "phoque",
+        "piano", "piège", "pirate", "plume", "poisson", "portail", "potager", "poussin", "prairie", "prisme",
+        "puits", "pyramide", "puzzle", "python", "quille", "radis", "rayon", "réfrigérateur", "renard", "renne",
+        "rivière", "robot", "roc", "rocher", "rose", "roue", "rubis", "sablier", "sable", "sacoche",
+        "salade", "salopette", "sapin", "sardine", "satellite", "savon", "sculpture", "singe", "sirène", 
+        "soleil", "sombrero", "sorcière", "soucoupe", "soupe", "sphère", "squelette", "station", "statue", "stylo",
+        "sucrerie", "tabouret", "tambour", "tapis", "tatouage", "tempête", "tente", "tigre", "toupie", "traîneau",
+        "train", "triangle", "trompette", "tunnel", "tulipe", "tortue", "uniforme", "univers", "vampire", "vanille",
+        "vaisseau", "valise", "vase", "vélo", "verger", "verre", "vétérinaire", "village", "violon", "volcan",
+        "wagon", "xylophone", "yacht", "zèbre", "zéro", "zigzag", "zoologiste"
+    ],
+    "en": [
+        "apple", "arrow", "bridge", "camera", "dolphin", "elephant", "feather", "giraffe", "horizon", "island",
+        "jungle", "kitten", "lemon", "mountain", "notebook", "ocean", "pencil", "queen", "rainbow", "sailboat",
+        "tiger", "umbrella", "violin", "waterfall", "xylophone", "yacht", "zebra", "balloon", "candle", "diamond",
+        "earring", "flower", "guitar", "honey", "igloo", "jigsaw", "kangaroo", "lantern", "mirror", "necklace",
+        "octopus", "pyramid", "quartz", "rocket", "snowflake", "telescope", "unicorn", "village", "whistle", "zeppelin",
+        "anchor", "butterfly", "caterpillar", "dragon", "enchanted", "fireplace", "galaxy", "hedgehog", "icicle", "jellyfish",
+        "keyhole", "labyrinth", "magnet", "nebula", "orchid", "parachute", "quill", "riverbank", "sapphire", "treasure",
+        "utensil", "volcano", "windmill", "zeppelin", "antelope", "biscuit", "caravan", "daydream", "emerald", "fountain",
+        "grapefruit", "harp", "indigo", "jasmine", "kiwi", "lighthouse", "meadow", "nectarine", "oyster", "peacock",
+        "quokka", "raven", "strawberry", "topaz", "umbrella", "violet", "woodpecker", "zipper", "archer", "beehive",
+        "crystal", "dandelion", "echo", "falcon", "gazelle", "horizon", "ivory", "jukebox", "karate", "lilac",
+        "mango", "nebula", "orchard", "penguin", "quartz", "rosebud", "sunflower", "teardrop", "urchin", "vortex",
+        "walrus", "zeppelin", "albatross", "bamboo", "canyon", "dragonfly", "eclipse", "firefly", "garden", "hammock",
+        "illusion", "journey", "kettle", "lunar", "monsoon", "nectar", "onion", "parrot", "quiver", "rainforest",
+        "sapphire", "timber", "upstream", "volleyball", "whirlpool", "zenith", "almond", "birch", "chrysanthemum", "dolphin",
+        "ember", "fern", "ginger", "harvest", "inkwell", "jade", "kitten", "lavender", "magnolia", "nectarine",
+        "opal", "pearl", "quartz", "ripple", "sandalwood", "tornado", "umbrella", "violet", "whisper", "zeppelin",
+        "artichoke", "bluebird", "cherry", "dragonfruit", "elm", "fiddle", "galleon", "hickory", "iris", "jasper",
+        "kiwi", "lilypad", "murmur", "nimbus", "oregano", "poinsettia", "quartzite", "rainfall", "starlight", "tapestry",
+        "umbra", "velvet", "willow", "zigzag", "armadillo", "bouquet", "coral", "dandelion", "evergreen", "fireworks",
+        "garlic", "hibiscus", "ivy", "jungle", "koala", "lantern", "mistletoe", "nightingale", "oregano", "panther",
+        "quokka", "rose", "snowstorm", "teapot", "underbrush", "violet", "wilderness", "zephyr", "aloe", "bluebell",
+        "coconut", "daisy", "elmwood", "foxglove", "gazebo", "hedgerow", "inkling", "juniper", "kaleidoscope", "lichen",
+        "mulberry", "nutmeg", "opaline", "possum", "quokka", "river", "seashell", "turquoise", "umbrella", "verdant",
+        "whale", "zinnia", "avocado", "birchwood", "cliffside", "daffodil", "everest", "firebrand", "garnet", "honeycomb",
+        "iris", "jadeite", "kindling", "leopard", "maple", "nebula", "oasis", "pebble", "quartz", "ripples",
+        "sunset", "topiary", "utopia", "verdure", "windsong", "zodiac", "apricot", "blueberry", "cobblestone", "dawn",
+        "eucalyptus", "fernwood", "goldfinch", "harbinger", "incense", "jasperite", "kelp", "lotus", "marble", "nectar",
+        "obsidian", "poppy", "quinoa", "raincloud", "sapphire", "tangerine", "umbrella", "violets", "waterfall", "zeppelin",
+        "acorn", "barnacle", "canopy", "dewdrop", "emberglow", "firestone", "granite", "hawthorn", "icicle", "juniperberry",
+        "kindred", "lullaby", "mist", "nightshade", "opulence", "palisade", "quartzite", "rush", "shadow", "thistle",
+        "upstream", "vineyard", "wanderlust", "zenith", "almondwood", "beech", "chrysalis", "dolphin", "evermore", "firethorn",
+        "glistening", "hemlock", "infinity", "jasper", "krypton", "lapis", "moonlight", "nymph", "obsidian", "primrose",
+        "quartz", "reflection", "sunbeam", "topaz", "uplift", "verdigris", "whisper", "zephyr", "amethyst", "buttercup",
+        "cavern", "dove", "elmwood", "gemstone", "hawthorn", "iris", "jewel", "keystone", "labyrinth",
+        "mirage", "nebula", "orchid", "pebble", "quartz", "rainbow", "sunrise", "treetop", "universe", "verdant",
+        "water", "zenith", "avalanche", "breeze", "cascade", "dolphin", "evergreen", "firewood", "gold", "hilltop",
+        "ivy", "jasperite", "kite", "lighthouse", "meadow", "nightfall", "opal", "plum", "quartz", "rosebud",
+        "spectrum", "tundra", "uplands", "vista", "waterlily", "zodiac"
+    ],
+    "de": [
+        "Apfel", "Brücke", "Delfin", "Elefant", "Feder", "Giraffe", "Himmel", "Insel", "Kamera", "Lampe",
+        "Maß", "Nacht", "Ozean", "Papier", "Quark", "Regen", "Sonne", "Tanz", "Uhr", "Vogel",
+        "Wald", "Xylophon", "Yacht", "Zebra", "Abend", "Berg", "Chamäleon", "Dach", "Eis", "Fahrrad",
+        "Garten", "Haus", "Igel", "Jagd", "Kleidung", "Licht", "Mond", "Nase", "Orange", "Pferd",
+        "Qualle", "Ratte", "Schildkröte", "Tasche", "Ufer", "Vase", "Wolke", "Xenon", "Yeti", "Zug",
+        "Affe", "Blume", "Couch", "Dorf", "Erde", "Feuer", "Glocke", "Heimat", "Insekt", "Junge",
+        "Kirche", "Lampe", "Mutter", "Nachtisch", "Obst", "Pflanze", "Quellwasser", "Regenbogen", "Schatten", "Tisch",
+        "Uhrzeit", "Vogelhaus", "Waldweg", "Xylophonspiel", "Yin", "Zirkus", "Apfelbaum", "Blatt", "Clever", "Dachfenster",
+        "Elefantenherde", "Fisch", "Giraffenhals", "Hütte", "Iglu", "Junge", "Kleiner", "Lichterkette", "Märchen", "Nest",
+        "Oper", "Pappel", "Quacksalber", "Reh", "Stadt", "Teller", "Uhu", "Viertel", "Wiese", "Xylophonist",
+        "Yoghurt", "Zahn", "Ameise", "Biene", "Chamäleon", "Decke", "Erdbeere", "Fenster", "Gabel", "Hase",
+        "Indigo", "Juwel", "Käfer", "Löffel", "Meer", "Nachtigall", "Ozean", "Pflaster", "Quittung", "Rosenstrauß",
+        "Säbel", "Tiger", "Uferpromenade", "Vulkan", "Wasserfall", "Xenonlampe", "Yachtclub", "Zirkon", "Akazie", "Blitz",
+        "Cup", "Dachgepäckträger", "Erbsen", "Fledermaus", "Gänseblümchen", "Hochzeit", "Iris", "Junge", "Kaffeetasse", "Landschaft",
+        "Meerblick", "Natur", "Oberfläche", "Pille", "Quaste", "Rucksack", "Schaf", "Tausendfüßler", "Uhrwerk", "Verschiedenheit",
+        "Wasserkocher", "Xylographie", "Yachten", "Ziegel", "Acker", "Balkon", "Chili", "Dämmung", "Eichhörnchen", "Frost",
+        "Gras", "Hörner", "Individuum", "Junge", "Kalt", "Lichtstrahl", "Mensch", "Nadel", "Oberarm", "Pfeife",
+        "Qualität", "Rosen", "Silber", "Teppich", "Unfall", "Vogelstimme", "Wagen", "Xenophobie", "Yin", "Zigaretten",
+        "Abendessen", "Bier", "Camping", "Dämmerung", "Eier", "Fussball", "Gartenarbeit", "Hunde", "Interesse", "Junge",
+        "Kaffeebohnen", "Lust", "Metall", "Neugier", "Opfer", "Platz", "Quellen", "Regensturm", "Schirm", "Tanzen",
+        "Untergang", "Veranstaltung", "Wand", "Xylophonspieler", "Zebraherde", "Appetit", "Bogen", "Charme", "Dachgepäck",
+        "Engel", "Fieber", "Geschenk", "Heu", "Imbiss", "Junge", "Kastanie", "Lebensmittel", "Mütze", "Nebel",
+        "Oberarzt", "Pfad", "Qualm", "Raum", "Stein", "Tastatur", "Ummantelung", "Verkauf", "Wanderschuhe", "Xylophonisten",
+        "Yam", "Ziegelstein", "Arbeit", "Blume", "Cabrio", "Dach", "Eulen", "Feld", "Gräser", "Hecken",
+        "Igelnest", "Januar", "Kamm", "Lehre", "Männer", "Nase", "Oberfläche", "Pech", "Regen", "Schiff",
+        "Tischplatte", "Unterschied", "Würfel", "Xerox", "Yogi", "Zaun", "Alpen", "Brücke", "Coco", "Dromedar",
+        "Ende", "Fracht", "Glas", "Halle", "Insel", "Jagd", "Kasten", "Licht", "Mensch", "Nacht",
+        "Orchidee", "Pinsel", "Quittung", "Reh", "Schild", "Tor", "Uhr", "Vase", "Wind", "Xenon",
+        "Yvonne", "Zentrum", "Aschenbecher", "Ball", "Cymbal", "Dromedar", "Echse", "Fossil", "Gesicht", "Hammel",
+        "Indigo", "Jagd", "Korb", "Löwe", "Mauer", "Neues", "Otter", "Pfeil", "Qualität", "Ritter",
+        "Schnur", "Tanz", "Uhr", "Verzögerung", "Wagen", "Xylophon", "Zepter"
+    ],
+    "es": [
+        "abogado", "agua", "amigo", "anillo", "animal", "apartamento", "araña", "árbol", "avión", "banco",
+        "barco", "bebé", "biblioteca", "bicicleta", "blanco", "bombón", "botella", "burro", "café", "calle",
+        "cama", "cangrejo", "carne", "casa", "cielo", "coche", "conejo", "corazón", "cuadro", "cuero",
+        "deporte", "dinosaurio", "dinero", "espejo", "estrella", "familia", "fútbol", "gato", "guitarra", "hacha",
+        "helado", "hipopótamo", "huevo", "jardín", "jirafa", "juguete", "lago", "lámpara", "león", "libro",
+        "luna", "madre", "mar", "mesa", "mochila", "montaña", "murciélago", "naranja", "nieve", "nube",
+        "oficina", "olla", "oso", "pájaro", "palabra", "pelota", "piedra", "plaza", "pluma", "pueblo",
+        "quinto", "ratón", "reina", "silla", "sol", "sombrero", "sopa", "taza", "teléfono", "tren",
+        "universidad", "vaca", "vacío", "valle", "viento", "zapato", "zorro", "abajo", "agua", "alumno",
+        "aprender", "arena", "artista", "autobús", "banco", "boca", "caja", "cama", "campo", "cerca",
+        "cielo", "colina", "comida", "cruz", "dedo", "derecha", "dificultad", "dólar", "elástico", "esquina",
+        "feliz", "flor", "gente", "hoja", "hora", "joven", "llama", "luna", "mañana", "manzana",
+        "mesa", "milagro", "moneda", "mujer", "niña", "noche", "novio", "olvidar", "piedra", "plaza",
+        "ratón", "rojo", "salud", "salón", "secreto", "serpiente", "sol", "sombra", "techo", "tierra",
+        "viento", "verdad", "vestido", "zapatilla", "zapato", "aire", "amigo", "animal", "aprender", "arte",
+        "autobús", "banco", "boca", "caja", "cama", "campo", "cerca", "cielo", "colina", "comida",
+        "cruz", "dedo", "derecha", "dificultad", "dólar", "elástico", "esquina", "feliz", "flor",
+        "gente", "hoja", "hora", "joven", "llama", "luna", "mañana", "manzana", "mesa", "milagro",
+        "moneda", "mujer", "niña", "noche", "novio", "olvidar", "piedra", "plaza", "ratón", "rojo",
+        "salud", "salón", "secreto", "serpiente", "sol", "sombra", "techo", "tierra", "viento",
+        "verdad", "vestido", "zapatilla", "zapato", "aire", "alumno", "aprender", "arena", "artista", "autobús",
+        "banco", "boca", "caja", "cama", "campo", "cerca", "cielo", "colina", "comida", "cruz",
+        "dedo", "derecha", "dificultad", "dólar", "elástico", "esquina", "feliz", "flor", "gente", "hoja",
+        "hora", "joven", "llama", "luna", "mañana", "manzana", "mesa", "milagro", "moneda", "mujer",
+        "niña", "noche", "novio", "olvidar", "piedra", "plaza", "ratón", "rojo", "salud", "salón",
+        "secreto", "serpiente", "sol", "sombra", "techo", "tierra", "viento", "verdad", "vestido", "zapatilla"
+    ]
+}
+
+# Fonction pour créer un fichier CSV
+def create_csv_file(language, words):
+    directory = "../image"
+    os.makedirs(directory, exist_ok=True)  # Crée le dossier s'il n'existe pas
+    filename = os.path.join(directory, f"liste_pendu_{language}.csv")
+    with open(filename, mode='w', encoding='utf-8', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["mot"])  # En-tête
+        for word in words:
+            writer.writerow([word])
+    print(f"Fichier créé : {filename}")
+
+# Création des fichiers pour chaque langue
+for lang, word_list in words.items():
+    create_csv_file(lang, word_list)
