@@ -21,7 +21,7 @@ PenduNSI est une implémentation du jeu du pendu en Python, développée dans le
 1. Clonez le dépôt sur votre machine locale :
 
    ```bash
-   git clone https://github.com/Pi-Aime/PenduNSI.git
+   git clone https://github.com/PenguinRoot/PenduNSI.git
    ```
 
 2. Accédez au répertoire du projet :
